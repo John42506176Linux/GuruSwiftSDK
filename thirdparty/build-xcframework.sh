@@ -12,7 +12,7 @@ set -euo pipefail
 readonly opencv_sha="b0dc474160e389b9c9045da5db49d03ae17c6a6b"  # 4.6.0
 
 function checkout_opencv {
-    [[ -d opencv ]] || git clone git@github.com:opencv/opencv.git
+    [[ -d opencv ]] || git clone https@github.com:opencv/opencv.git
     pushd opencv
     git checkout "${opencv_sha}"
     popd
@@ -22,7 +22,7 @@ function build_xcframework {
     checkout_opencv
 
     pushd opencv
-    python platforms/apple/build_xcframework.py \
+    python3 platforms/apple/build_xcframework.py \
         -o build \
         --iphoneos_archs arm64 \
         --iphonesimulator_archs x86_64,arm64 \

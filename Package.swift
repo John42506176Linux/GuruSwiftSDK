@@ -7,7 +7,7 @@ let package = Package(
     name: "GuruSwiftSDK",
     platforms: [
         .iOS(.v13),
-        .macOS(.v12)
+        // .macOS(.v12)
     ],
     products: [
         .library(

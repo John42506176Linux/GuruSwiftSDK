@@ -1,0 +1,13 @@
+
+ -> GuruSwiftSDK -> GuruSwiftSDK (0.0.1)
+    - ERROR | [GuruSwiftSDK/libgurucv] xcodebuild: Returned an unsuccessful exit code. You can use `--verbose` for more information.
+    - NOTE  | [GuruSwiftSDK/libgurucv] xcodebuild:  note: Using codesigning identity override: -
+    - NOTE  | [GuruSwiftSDK/libgurucv] xcodebuild:  note: Building targets in dependency order
+    - NOTE  | [GuruSwiftSDK/libgurucv] xcodebuild:  note: Metadata extraction skipped. No AppIntents.framework dependency found. (in target 'ZIPFoundation' from project 'Pods')
+    - ERROR | xcodebuild:  /Users/work/Documents/guru-swift-sdk/Sources/GuruSwiftSDK/PoseEstimation.swift:12:8: error: no such module 'libgurucv'
+    - NOTE  | [GuruSwiftSDK/libgurucv] xcodebuild:  /Users/work/Documents/guru-swift-sdk/Sources/libgurucv/src/preprocess.cpp:7:10: fatal error: 'libgurucv/preprocess.hpp' file not found
+    - NOTE  | [GuruSwiftSDK/libgurucv] xcodebuild:  /Users/work/Documents/guru-swift-sdk/Sources/libgurucv/src/test_preprocess.cpp:8:10: fatal error: 'libgurucv/preprocess.hpp' file not found
+
+Pods workspace available at `/var/folders/2q/d49b8l112jjfz63n8h268m680000gp/T/CocoaPods-Lint-20230308-54743-ln5l3b-GuruSwiftSDK/App.xcworkspace` for inspection.
+
+[!] GuruSwiftSDK did not pass validation, due to 2 errors.
