@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
         :tag => s.version.to_s
     }
     s.source_files = 'Sources/libgurucv/**/*'
-    s.dependency "opencv2-guru", "~> 1.0.0"
+    s.dependency "opencv2-guru", "~> 0.0.1"
     s.ios.deployment_target = '15.0'  
     # Flutter.framework does not contain a i386 slice.
     s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
