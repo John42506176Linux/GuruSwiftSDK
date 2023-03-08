@@ -16,14 +16,11 @@ Pod::Spec.new do |s|
         :git => 'https://github.com/John42506176Linux/GuruSwiftSDK.git',
         :tag => s.version.to_s
     }
-    s.source = {
-      :http => "https://formguru-datasets.s3.us-west-2.amazonaws.com/opencv2_ios_builds/opencv2.xcframework-b0dc474160e389b9c9045da5db49d03ae17c6a6b.zip"
-    }
-    # s.prepare_command = <<-CMD
-    #   curl -L  -o "myproject.zip"
-    #   unzip myproject.zip
-    #   rm myproject.zip
-    # CMD
+    s.prepare_command = <<-CMD
+      curl -f --silent -L "https://formguru-datasets.s3.us-west-2.amazonaws.com/opencv2_ios_builds/opencv2.xcframework-b0dc474160e389b9c9045da5db49d03ae17c6a6b.zip" -o "myproject.zip"
+      unzip -u myproject.zip
+      rm myproject.zip
+    CMD
     s.source_files = 'Sources/libgurucv/**/*'
     s.vendored_frameworks = "opencv2.xcframework"
     s.ios.deployment_target = '15.0'  
