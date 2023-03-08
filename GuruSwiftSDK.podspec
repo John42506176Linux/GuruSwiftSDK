@@ -7,7 +7,7 @@ source = 'https://github.com/John42506176Linux/GuruSwiftSDK.git'
 
 Pod::Spec.new do |s|
     s.name             = 'GuruSwiftSDK'
-    s.version          = '0.0.1'
+    s.version          = '0.0.2'
     s.summary          = 'Swift SDK for Guru API'
     s.description      = <<-DESC
   A cocoapods version of the swift package
@@ -21,7 +21,7 @@ Pod::Spec.new do |s|
     }
     s.source_files = 'Sources/GuruSwiftSDK/**/*'
     s.dependency "ZIPFoundation", "~> 0.9.15"
-    s.dependency "libgurucv", "~> 0.0.1"
+    s.dependency "libgurucv", "~> 0.0.2"
     s.ios.deployment_target = '15.0'  
     # Flutter.framework does not contain a i386 slice.
     s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }

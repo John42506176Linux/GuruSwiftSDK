@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'libgurucv'
-  s.version          = '0.0.1'
+  s.version          = '0.0.2'
   s.summary          = 'Swift SDK for libgurucv'
   s.description      = <<-DESC
 A cocoapods version of the swift package
