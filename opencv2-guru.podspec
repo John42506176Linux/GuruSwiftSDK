@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name = 'opencv2-guru'
-    s.version = '1.0.0'
+    s.version = '0.0.1'
     s.source = {
         :http => 'https://formguru-datasets.s3.us-west-2.amazonaws.com/opencv2_ios_builds/opencv2.xcframework-b0dc474160e389b9c9045da5db49d03ae17c6a6b.zip'
     }    
