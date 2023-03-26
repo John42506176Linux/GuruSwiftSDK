@@ -18,7 +18,6 @@ public class LocalVideoInference : NSObject {
   let maxDuration: TimeInterval
   let analysisPerSecond: Int
   let recordTo: URL?
-  let cameraPosition: AVCaptureDevice.Position
   
   let session = AVCaptureSession()
   let inferenceLock = NSLock()
@@ -27,17 +26,18 @@ public class LocalVideoInference : NSObject {
   var poseModel: MLModel?
   let width = 480.0
   let height = 640.0
+  var session_started = false
   
   var latestInference: FrameInference?
   var analysisClient: AnalysisClient?
   var videoId: String?
-  var startedAt: Date?
+  public var startedAt: Date?
   
   public init(consumer: InferenceConsumer,
               cameraPosition: AVCaptureDevice.Position,
               source: String,
               apiKey: String,
-              maxDuration: TimeInterval = 60,
+              maxDuration: TimeInterval = 90,
               analysisPerSecond: Int = 8,
               recordTo: URL? = nil) throws {
     callback = consumer
@@ -46,7 +46,6 @@ public class LocalVideoInference : NSObject {
     self.maxDuration = maxDuration
     self.analysisPerSecond = analysisPerSecond
     self.recordTo = recordTo
-    self.cameraPosition = cameraPosition
     
     super.init()
     
@@ -76,6 +75,7 @@ public class LocalVideoInference : NSObject {
       videoId = try await createVideo(activity: activity)
       
       startedAt = Date()
+        
       analysisClient = AnalysisClient(videoId: videoId!, apiKey: apiKey, maxPerSecond: analysisPerSecond)
       DispatchQueue.global(qos: .userInitiated).async {
         var recordOutput: AVCaptureMovieFileOutput? = nil
@@ -88,7 +88,6 @@ public class LocalVideoInference : NSObject {
         
         recordOutput?.startRecording(to: self.recordTo!, recordingDelegate: self)
       }
-      
       return videoId!
     }
     else {
@@ -96,7 +95,7 @@ public class LocalVideoInference : NSObject {
     }
   }
   
-  public func stop() async throws -> Analysis {
+  public func stop() async throws -> Analysis? {
     if (session.isRunning) {
       DispatchQueue.global(qos: .userInitiated).async {
         self.session.stopRunning()
@@ -108,7 +107,7 @@ public class LocalVideoInference : NSObject {
     }
     else {
       analysisClient!.waitUntilQuiet()
-      return try await analysisClient!.flush()!
+      return try await analysisClient!.flush()
     }
   }
 
@@ -214,7 +213,7 @@ public class LocalVideoInference : NSObject {
     guard let cgImage = context.makeImage() else {
       return nil
     }
-    let image = UIImage(cgImage: cgImage, scale: 1, orientation: self.cameraPosition == .front ? .downMirrored : .up)
+    let image = UIImage(cgImage: cgImage, scale: 1, orientation: .up)
     CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly)
     
     return rotateImage(image: image, radians: .pi/2)
@@ -230,7 +229,7 @@ public class LocalVideoInference : NSObject {
       return prevFramePose!.keypointForLandmark(landmark)
     }
     func isVisible(point: Keypoint?) -> Bool {
-      let minScore = 0.1
+      let minScore = 0.2
       return point != nil && point!.score > minScore
     }
     func getIfVisible(landmark: InferenceLandmark) -> Keypoint? {
@@ -320,6 +319,7 @@ public class LocalVideoInference : NSObject {
   
   private func runInference(image: UIImage, box: CGRect) throws -> [Int: Keypoint] {
     // our ML model only supports one resolution for now
+      
     assert(image.size.height == height);
     assert(image.size.width == width);
     
@@ -343,6 +343,72 @@ public class LocalVideoInference : NSObject {
     }
     return keypoints;
   }
+  
+    public func startFlutter(activity: Activity) async throws -> String {
+        if #available(iOS 15, *) {
+          try! await ensureModelIsReady();
+          
+          videoId = try await createVideo(activity: activity)
+          startedAt = Date()
+            let dateFormatter = DateFormatter()
+
+            // Set Date/Time Style
+            dateFormatter.dateStyle = .long
+            dateFormatter.timeStyle = .long
+              
+          analysisClient = AnalysisClient(videoId: videoId!, apiKey: apiKey, maxPerSecond: analysisPerSecond)
+            session_started = true
+          return videoId!
+        }
+        else {
+          throw InferenceSetupFailed.iosRequirementUnmet
+        }
+      }
+
+      public func captureFlutterOutput(_ image : UIImage) {
+          if(session_started) {
+              frameIndex += 1
+              let thisFrameIndex = frameIndex
+                    
+                DispatchQueue.global(qos: .userInteractive).async {
+                  let inference = self.updateInference(image: image, frameIndex: thisFrameIndex)
+                    if (inference != nil && self.callback.getVisibility(inference: inference!,cutoff: 0.55)) {
+                    Task {
+                      do {
+                        let analysis = try await self.analysisClient?.add(inference: inference!)
+                        if (analysis != nil) {
+                          DispatchQueue.main.async() {
+                            self.callback.consumeAnalysis(analysis: analysis!)
+                          }
+                        }
+                      }
+                      catch {
+                        print("Failed to re-build analysis: \(error)")
+                      }
+                    }
+                  }
+                }
+                if(startedAt != nil) {
+                    var inference = self.latestInference
+                    if (inference == nil) {
+                      inference = FrameInference(
+                        keypoints: [:],
+                        timestamp: Date(),
+                        secondsSinceStart: Date().timeIntervalSinceReferenceDate - startedAt!.timeIntervalSinceReferenceDate,
+                        frameIndex: frameIndex,
+                        previousFrame: nil
+                      )
+                    }
+                    self.callback.consumeFrame(frame: image, inference: inference!)
+                    
+                  if (Date() > self.startedAt!.addingTimeInterval(self.maxDuration)) {
+                    Task {
+                      try await self.stop()
+                    }
+                  }
+                }
+          }
+      }
 }
 
 extension AVCaptureDevice {
