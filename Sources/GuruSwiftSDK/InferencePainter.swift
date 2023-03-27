@@ -34,6 +34,11 @@ public class InferencePainter {
   public func cgContext() -> CGContext {
     return context
   }
+    
+  public func keyPointPainter() -> KeypointPainter{
+    return keypointPainter
+  }
+
   
   /// Finalise the painting and return the finished image.
   /// This InferencePainter can no longer be used after this
