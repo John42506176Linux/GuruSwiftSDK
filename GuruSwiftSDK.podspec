@@ -7,7 +7,7 @@ source = 'https://github.com/John42506176Linux/GuruSwiftSDK.git'
 
 Pod::Spec.new do |s|
     s.name             = 'GuruSwiftSDK'
-    s.version          = '0.0.3'
+    s.version          = '0.0.4'
     s.summary          = 'Swift SDK for Guru API'
     s.description      = <<-DESC
   A cocoapods version of the swift package
