@@ -126,7 +126,8 @@ public class InferencePainter {
     clockwise: Bool,
     backgroundColor: UIColor = UIColor.blue,
     foregroundColor: UIColor = UIColor.white,
-    fontSize: Int = 48) -> InferencePainter {
+    fontSize: Int = 48,
+    removeArc:Bool = false) -> InferencePainter {
     let centerKeypoint = inference.keypointForLandmark(center)
     let fromKeypoint = inference.keypointForLandmark(from)
     let toKeypoint = inference.keypointForLandmark(to)
@@ -139,7 +140,8 @@ public class InferencePainter {
         clockwise: clockwise,
         backgroundColor: backgroundColor,
         foregroundColor: foregroundColor,
-        fontSize: fontSize
+        fontSize: fontSize,
+        removeArc: removeArc
       )
     }
     

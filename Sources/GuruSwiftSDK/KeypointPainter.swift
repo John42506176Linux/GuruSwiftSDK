@@ -89,21 +89,26 @@ public class KeypointPainter {
     clockwise: Bool,
     backgroundColor: UIColor = UIColor.blue,
     foregroundColor: UIColor = UIColor.white,
-    fontSize: Int = 48) -> KeypointPainter {
+    fontSize: Int = 48,
+    removeArc:Bool = false) -> KeypointPainter {
     let centerTo = vector(from: center, to: to)
     let centerFrom = vector(from: center, to: from)
-    let path = UIBezierPath()
-    path.move(to: framePosition(center))
-    path.addArc(
-      withCenter: framePosition(center),
-      radius: vectorLength(CGVector(dx: centerTo.dx * self.width, dy: centerTo.dy * self.height)),
-      startAngle: angleBetween(v1: CGVector(dx: 1.0, dy: 0.0), v2: normalizeVector(centerTo)),
-      endAngle: angleBetween(v1: CGVector(dx: 1.0, dy: 0.0), v2: normalizeVector(centerFrom)),
-      clockwise: clockwise
-    )
-    path.close()
-    backgroundColor.setFill()
-    path.fill()
+        
+    if(!removeArc) {
+        let path = UIBezierPath()
+        path.move(to: framePosition(center))
+        path.addArc(
+          withCenter: framePosition(center),
+          radius: vectorLength(CGVector(dx: centerTo.dx * self.width, dy: centerTo.dy * self.height)),
+          startAngle: angleBetween(v1: CGVector(dx: 1.0, dy: 0.0), v2: normalizeVector(centerTo)),
+          endAngle: angleBetween(v1: CGVector(dx: 1.0, dy: 0.0), v2: normalizeVector(centerFrom)),
+          clockwise: clockwise
+        )
+        path.close()
+        backgroundColor.setFill()
+        path.fill()
+    }
+    
     
     var angleDegrees: Double?
     if (clockwise) {
